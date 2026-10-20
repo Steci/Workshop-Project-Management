@@ -4,6 +4,8 @@ L'objectif de ce workshop est de découvrir les outils et les méthodes qui perm
 
 Au-delà de simplement "faire fonctionner le code", un bon développeur sait également organiser son travail, communiquer avec les autres membres du projet et garder un historique propre de ses modifications.
 
+**Vous devez réaliser ce workshop avec votre binôme de printf**
+
 ---
 
 # Les branches Git
@@ -54,6 +56,9 @@ Cela permet à toute l'équipe de savoir :
 **C'est super important**
 Une bonne issue respecte la règle **NDTA** :
 
+![ndta1](images/issue_ndta_1.png)
+![ndta2](images/issue_ndta_2.png)
+
 ### N - Nommer
 
 Choisissez un titre clair et précis.
@@ -97,11 +102,22 @@ Assigner une personne permet de savoir immédiatement qui est chargé de cette t
 
 Depuis l'interface GitHub :
 
-1. Créez une nouvelle issue
-2. Donnez-lui un titre pertinent
+1. Créez une nouvelle issue dans l'onglet **Issues** puis avec le bouton **New issue**
+2. Donnez-lui un titre pertinent (en l'occurence en rapport avec votre projet printf)
 3. Ajoutez une description
-4. Appliquez un label
-5. Assignez-la à vous-même.
+4. Appliquez un label avec l'onglet **Labels** à droite de la page.
+
+![labels](images/labels.png)
+
+Par défaut sur github, des labels sont déjà créés pour vous mais vous pouvez les éditer avec le bouton `Edit Labels` dans les paramètres (bouton engrenage à côté du paneau Label lorsque vous créez votre issue)
+
+![edit_labels](images/edit_labels.png)
+
+5. Assignez-la à vous-même grâce à l'onglet **Assignees** à droite de la page.
+
+Pour info, voilà quoi ressemble la page des issues du **repo du Rust** avec tout plein de tags et de texte :)
+
+![rust_issues](images/rust_issues.png)
 
 ---
 
@@ -143,6 +159,12 @@ Avec une Pull Request : (low cortisol)
 * Le projet reste stable.
 
 Même lorsque vous travaillez seul, les Pull Requests sont utiles : elles vous obligent à prendre du recul et à relire votre propre travail.
+
+Maintenant, *après avoir ajouté des changements sur votre branche `dev`,* vous pouvez créer une pull request dans l'onglet Pull Request.
+
+Sélectionnez bien la branche sur laquelle vous voulez créer votre pull request.
+
+![pr](images/create_pullrequest.png)
 
 ---
 
@@ -306,13 +328,24 @@ Ainsi, en un coup d'œil, toute l'équipe peut savoir :
 
 L'objectif n'est pas seulement d'organiser le projet, mais aussi d'améliorer la communication entre les membres de l'équipe.
 
+Sur un gros projet comme **le repo du Rust**, voilà à quoi ressemble un github projet bien organisé :
+
+![rust_project](images/rust_project.png)
+
+Commencez par créer un Github project dans l'onglet **Projects** en haut.
+Rajoutez également une nouvelle vue `Board`. Cette vue va nous permettre d'organiser les tâches dans le style **Kanban**
+
+![Create board](images/create_board.png)
+
 ----------
 
 # Lier les Issues au Project
 
 Créer un Project ne suffit pas : il faut y ajouter les issues.
 
-Depuis une issue, il est possible de l'associer à un Project afin qu'elle apparaisse automatiquement dans le tableau.
+**Depuis une issue, il est possible de l'associer à un Project afin qu'elle apparaisse automatiquement dans le tableau.**
+
+Séléctionnez une issue que vous avez déjà créée et dans l'onglet `Project` à droite, associez-la au projet que vous avez créé. Assurez-vous que l'issue créee est associée à un **statut** (Todo, In Progress, etc)
 
 Une fois liée, il devient très simple de suivre son évolution en déplaçant la carte entre les différentes colonnes.
 
@@ -401,3 +434,52 @@ C'est cette organisation qui est utilisée sur la majorité des projets professi
 5.  Lors de la création de votre Pull Request, liez-la à votre issue en utilisant `Closes #<numéro>`.
 
 6.  Vérifiez qu'après la fusion de la Pull Request, l'issue est automatiquement fermée.
+
+---
+
+
+# GitHub Actions
+
+Jusqu'ici, toutes les vérifications (compiler le projet, lancer les tests, vérifier le style du code...) sont faites **à la main**. Et ce qui est fait à la main finit toujours par être oublié.
+
+**GitHub Actions** est l'outil d'**intégration continue** (CI/CD) intégré à GitHub. Il permet d'exécuter automatiquement des tâches lorsqu'un événement se produit sur le dépôt, par exemple :
+-   un `push` sur une branche ;
+-   l'ouverture ou la mise à jour d'une Pull Request ;
+-   la création d'une issue ;
+-   une exécution planifiée (tous les jours à minuit, par exemple).
+
+Ces automatisations sont décrites dans des fichiers **YAML** placés dans le dossier `.github/workflows/` du dépôt :
+
+```yaml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compiler le projet
+        run: make
+      - name: Lancer les tests
+        run: make tests_run
+```
+
+Quelques notions à retenir :
+-   **Workflow** : un fichier YAML décrivant une automatisation ;
+-   **Event** (`on`) : l'événement qui déclenche le workflow ;
+-   **Job** : un ensemble d'étapes exécutées sur une même machine (*runner*) ;
+-   **Step** : une commande (`run`) ou une action réutilisable (`uses`).
+
+Combinées aux Pull Requests, les GitHub Actions permettent par exemple d'**empêcher la fusion** d'une PR tant que le projet ne compile pas ou que les tests échouent. La review humaine peut alors se concentrer sur la logique du code plutôt que sur les erreurs évidentes.
+
+## Pour aller plus loin
+
+Pour découvrir les GitHub Actions de manière interactive, suivez les leçons de **GitHub Actions Hero** :
+
+👉 [https://github-actions-hero.vercel.app/lessons/1](https://github-actions-hero.vercel.app/lessons/1)
+
+---
